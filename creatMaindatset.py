@@ -1,4 +1,5 @@
 import csv 
+import random
 
 textData=open('datafile.csv',encoding='utf-8')
 
@@ -22,7 +23,7 @@ for sentence in dataSet:
             prefix=i[:j]
             full=i
             NewDataSet.append((full,prefix))
-
+random.shuffle(NewDataSet)
 # درست کردن فایل اصلی دیتا ست و ذخیره اش تو csv
 
 with  open('MainDataSet.csv','w',newline='', encoding='utf-8' ) as csvFile:
