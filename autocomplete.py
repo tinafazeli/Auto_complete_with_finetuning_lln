@@ -9,10 +9,14 @@ config = AutoConfig.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModel.from_pretrained(model_name)
 
-# لود دیتاستی که خودمون آماده کردیم
-train_dataset=load_dataset('csv', data_files='MainDataSet.csv')
-test_dataset = load_dataset('csv', data_files='TestDataSet.csv')
 
+train_dataset=load_dataset('csv', data_files='MainDataSet.csv')['train']
+test_dataset = load_dataset('csv', data_files='TestDataSet.csv')['train']
+
+dataset_dict = DatasetDict({
+    'train': train_dataset,
+    'test': test_dataset
+})
 
 lora_config=LoraConfig(
     r=14,
@@ -29,15 +33,15 @@ training_arg=TrainingArguments(
     evaluation_strategy="epoch",
     weight_decay=0.01,
     num_train_epochs=10,
-    per_device_train_batch_size=5000,
-    per_device_eval_batch_size=8000
+    per_device_train_batch_size=5,
+    per_device_eval_batch_size=16
 )
 
 trainer= Trainer(
     model=lora_model,
     args=training_arg,
-    train_dataset=train_dataset['train'],
-    eval_dataset=test_dataset['train'],
+    train_dataset=dataset_dict['train'],
+    eval_dataset=dataset_dict['test']
 )
 
 trainer.train()
